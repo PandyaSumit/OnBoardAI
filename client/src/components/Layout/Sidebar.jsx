@@ -1,4 +1,3 @@
-// components/Sidebar.js
 import {
     LayoutDashboard,
     Bot,
@@ -7,16 +6,12 @@ import {
     Settings,
     LifeBuoy,
     LogOut,
-    Menu,
     X
 } from 'lucide-react';
-import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, mobileOpen, setMobileOpen }) => {
     const location = useLocation();
-    const [isOpen, setIsOpen] = useState(true);
-    const [mobileOpen, setMobileOpen] = useState(false);
 
     const navItems = [
         { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
@@ -54,6 +49,13 @@ const Sidebar = () => {
                         >
                             {item.label}
                         </span>
+                        
+                        {/* Tooltip for collapsed state */}
+                        {!isOpen && (
+                            <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none">
+                                {item.label}
+                            </div>
+                        )}
                     </Link>
                 );
             })}
@@ -62,26 +64,26 @@ const Sidebar = () => {
 
     return (
         <>
-            {/* Mobile Toggle Button */}
-            <div className="lg:hidden fixed top-4 left-4 z-50">
-                <button
-                    onClick={() => setMobileOpen(!mobileOpen)}
-                    className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 p-2 rounded-md shadow"
-                >
-                    {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-                </button>
-            </div>
-
             {/* Sidebar */}
             <aside
                 className={`
-                    fixed lg:top-[56px] lg:h-[calc(100vh-56px)] top-0 left-0 z-40 bg-gradient-to-br from-white to-gray-100 dark:from-gray-900 dark:to-gray-800
+                    fixed top-14 h-[calc(100vh-3.5rem)] left-0 z-40 bg-gradient-to-br from-white to-gray-100 dark:from-gray-900 dark:to-gray-800
                     border-r border-gray-200 dark:border-gray-700 shadow-lg transition-all duration-300 ease-in-out
                     ${isOpen ? 'w-64' : 'w-20'} 
                     ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} 
-                    lg:translate-x-0 lg:top-[65px] lg:h-[calc(100vh-65px)]
+                    lg:translate-x-0
                 `}
             >
+                {/* Mobile Close Button */}
+                <div className="lg:hidden absolute top-4 right-4 z-50">
+                    <button
+                        onClick={() => setMobileOpen(false)}
+                        className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    >
+                        <X size={20} className="text-gray-600 dark:text-gray-300" />
+                    </button>
+                </div>
+
                 <div className="flex flex-col h-full justify-between">
                     {/* Nav Section */}
                     {renderNavItems()}
@@ -100,24 +102,9 @@ const Sidebar = () => {
                                     </div>
                                 )}
                             </div>
-                            <button
-                                className="text-red-500 hover:text-red-600 dark:hover:text-red-400 transition"
-                                title="Logout"
-                            >
-                                <LogOut size={18} />
-                            </button>
                         </div>
                     </div>
                 </div>
-
-                {/* Toggle (desktop only) */}
-                <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className={`absolute hidden lg:flex -right-3 top-4 w-7 h-7 rounded-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 shadow-md items-center justify-center hover:rotate-180 transition-transform duration-300`}
-                    title={isOpen ? 'Collapse Sidebar' : 'Expand Sidebar'}
-                >
-                    <Menu size={16} />
-                </button>
             </aside>
 
             {/* Overlay for mobile */}

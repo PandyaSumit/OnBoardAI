@@ -9,11 +9,12 @@ import {
     ChevronDown,
     Search,
     X,
-    Command
+    Command,
+    Menu
 } from 'lucide-react';
 import useDarkMode from '../../utils/useDarkMode';
 
-const Header = () => {
+const Header = ({ toggleSidebar, toggleMobileSidebar, sidebarOpen }) => {
     const [theme, toggleTheme] = useDarkMode();
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
@@ -79,16 +80,38 @@ const Header = () => {
 
     return (
         <div className={theme === 'dark' ? 'dark' : ''}>
-            <header className="w-full sticky top-0 z-50 backdrop-blur-sm bg-white/60 dark:bg-gray-900/40 border-b border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between px-5 py-3 md:py-2">
-                    <div className="flex items-center space-x-1 text-lg font-semibold">
-                        <span className="bg-gradient-to-r from-[#FF6B00] to-[#FF0080] bg-clip-text text-transparent">
-                            Onboard
-                        </span>
-                        <span className="text-gray-800 dark:text-gray-100">AI</span>
+            <header className="w-full sticky top-0 z-50 bg-white/60 dark:bg-gray-900/40 border-b border-gray-200 dark:border-gray-700 h-14">
+                <div className="flex items-center justify-between px-5 py-3 h-full">
+                    {/* Left Section - Logo with Sidebar Toggle */}
+                    <div className="flex items-center gap-3">
+                        {/* Sidebar Toggle Button - Desktop */}
+                        <button
+                            onClick={toggleSidebar}
+                            className="hidden lg:flex p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                            title={sidebarOpen ? 'Collapse Sidebar' : 'Expand Sidebar'}
+                        >
+                            <Menu size={20} className="text-gray-600 dark:text-gray-300" />
+                        </button>
+
+                        {/* Mobile Sidebar Toggle */}
+                        <button
+                            onClick={toggleMobileSidebar}
+                            className="lg:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                            title="Toggle Menu"
+                        >
+                            <Menu size={20} className="text-gray-600 dark:text-gray-300" />
+                        </button>
+
+                        {/* Logo */}
+                        <div className="flex items-center space-x-1 text-lg font-semibold">
+                            <span className="bg-gradient-to-r from-[#FF6B00] to-[#FF0080] bg-clip-text text-transparent">
+                                Onboard
+                            </span>
+                            <span className="text-gray-800 dark:text-gray-100">AI</span>
+                        </div>
                     </div>
 
-
+                    {/* Center - Search Bar */}
                     <div className="hidden md:flex flex-1 max-w-md mx-4" ref={searchRef}>
                         <div className="relative w-full">
                             <form onSubmit={handleSearchSubmit} className="w-full">
@@ -146,8 +169,7 @@ const Header = () => {
                         </div>
                     </div>
 
-
-                    {/* Controls */}
+                    {/* Right Section - Controls */}
                     <div className="flex items-center gap-3">
                         {/* Theme Toggle */}
                         <button
@@ -176,7 +198,6 @@ const Header = () => {
                             )}
                         </button>
 
-                        {/* Profile Dropdown */}
                         {/* Profile Dropdown */}
                         <div className="relative" ref={dropdownRef}>
                             <button
@@ -219,12 +240,9 @@ const Header = () => {
                                 </>
                             )}
                         </div>
-
                     </div>
-
                 </div>
             </header>
-
         </div>
     );
 };
