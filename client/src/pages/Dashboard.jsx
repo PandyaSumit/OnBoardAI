@@ -178,15 +178,15 @@ const Dashboard = () => {
         }
     };
 
-    const getColumnHeaderColor = (color) => {
-        const colors = {
-            gray: 'bg-gray-100 dark:bg-gray-700',
-            blue: 'bg-blue-100 dark:bg-blue-900/30',
-            yellow: 'bg-yellow-100 dark:bg-yellow-900/30',
-            green: 'bg-green-100 dark:bg-green-900/30'
-        };
-        return colors[color] || colors.gray;
-    };
+    // const getColumnHeaderColor = (color) => {
+    //     const colors = {
+    //         gray: 'bg-gray-50 dark:bg-gray-700',
+    //         blue: 'bg-blue-50 dark:bg-blue-900/20',
+    //         yellow: 'bg-yellow-50 dark:bg-yellow-900/20',
+    //         green: 'bg-green-50 dark:bg-green-900/20'
+    //     };
+    //     return colors[color] || colors.gray;
+    // };
 
     const tabs = [
         { id: 'kanban', label: 'Kanban Board', icon: Kanban },
@@ -309,74 +309,110 @@ const Dashboard = () => {
         switch (activeTab) {
             case 'kanban':
                 return (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {Object.values(columns).map((column) => (
-                            <div
-                                key={column.id}
-                                className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 h-fit"
-                                onDragOver={handleDragOver}
-                                onDrop={(e) => handleDrop(e, column.id)}
-                            >
-                                <div className={`p-4 rounded-t-xl ${getColumnHeaderColor(column.color)}`}>
-                                    <div className="flex items-center justify-between">
-                                        <h3 className="font-semibold text-gray-900 dark:text-white">{column.title}</h3>
-                                        <span className="bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs font-medium px-2 py-1 rounded-full">
-                                            {column.items.length}
-                                        </span>
+                    <div className="w-full overflow-x-auto pb-4">
+                        <div className="flex gap-4 min-w-max px-1">
+                            {Object.values(columns).map((column) => (
+                                <div
+                                    key={column.id}
+                                    className="flex-shrink-0 w-72 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
+                                    onDragOver={handleDragOver}
+                                    onDrop={(e) => handleDrop(e, column.id)}
+                                >
+                                    {/* Column Header */}
+                                    <div className="p-3 border-b border-gray-100 dark:border-gray-700">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <div className={`w-2 h-2 rounded-full ${column.color === 'gray' ? 'bg-gray-500' :
+                                                        column.color === 'blue' ? 'bg-blue-500' :
+                                                            column.color === 'yellow' ? 'bg-yellow-500' :
+                                                                'bg-green-500'
+                                                    }`}></div>
+                                                <h3 className="font-semibold text-gray-800 dark:text-gray-200 text-sm">{column.title}</h3>
+                                                <span className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs px-2 py-0.5 rounded-full font-medium">
+                                                    {column.items.length}
+                                                </span>
+                                            </div>
+                                            <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                                                <MoreHorizontal className="w-4 h-4 text-gray-400" />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Column Content */}
+                                    <div className="p-3 space-y-3 min-h-[400px] max-h-[500px] overflow-y-auto custom-scrollbar">
+                                        {column.items.map((item) => (
+                                            <div
+                                                key={item.id}
+                                                draggable
+                                                onDragStart={(e) => handleDragStart(e, item)}
+                                                className="group bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm dark:shadow-none border border-gray-200 dark:border-gray-700 hover:shadow-lg dark:hover:shadow-xl dark:hover:shadow-black/20 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-300 cursor-move hover:-translate-y-1"
+                                            >
+                                                {/* Card Header */}
+                                                <div className="flex items-start justify-between mb-3">
+                                                    <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-sm leading-snug flex-1 pr-3">
+                                                        {item.title}
+                                                    </h4>
+                                                    <span className={`text-xs px-2.5 py-1 rounded-full font-semibold flex-shrink-0 ${item.priority === 'high'
+                                                            ? 'bg-red-50 text-red-700 border border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20' :
+                                                            item.priority === 'medium'
+                                                                ? 'bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20' :
+                                                                'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20'
+                                                        }`}>
+                                                        {item.priority}
+                                                    </span>
+                                                </div>
+
+                                                {/* Description */}
+                                                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3 leading-relaxed">
+                                                    {item.description}
+                                                </p>
+
+                                                {/* Tags */}
+                                                <div className="flex flex-wrap gap-1.5 mb-4">
+                                                    {item.tags.slice(0, 3).map((tag) => (
+                                                        <span
+                                                            key={tag}
+                                                            className="bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 text-xs px-2.5 py-1 rounded-md font-medium border border-blue-200 dark:border-blue-500/20"
+                                                        >
+                                                            {tag}
+                                                        </span>
+                                                    ))}
+                                                    {item.tags.length > 3 && (
+                                                        <span className="bg-gray-50 dark:bg-gray-700/50 text-gray-600 dark:text-gray-400 text-xs px-2.5 py-1 rounded-md font-medium border border-gray-200 dark:border-gray-600">
+                                                            +{item.tags.length - 3}
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                {/* Footer */}
+                                                <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700">
+                                                    <div className="flex items-center gap-2.5">
+                                                        <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 dark:from-blue-400 dark:to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                                                            {item.assignee.split(' ').map(n => n[0]).join('')}
+                                                        </div>
+                                                        <span className="text-gray-700 dark:text-gray-300 font-medium text-sm">
+                                                            {item.assignee.split(' ')[0]}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400">
+                                                        <Clock className="w-3.5 h-3.5" />
+                                                        <span className="text-sm font-medium">
+                                                            {new Date(item.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                        {/* Add Task Button */}
+                                        <button className="w-full p-3 border border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 hover:border-blue-300 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all duration-200 group">
+                                            <Plus className="w-4 h-4 mx-auto mb-1 group-hover:scale-110 transition-transform" />
+                                            <span className="text-sm font-medium">Add Task</span>
+                                        </button>
                                     </div>
                                 </div>
-
-                                <div className="p-4 space-y-3 min-h-[400px]">
-                                    {column.items.map((item) => (
-                                        <div
-                                            key={item.id}
-                                            draggable
-                                            onDragStart={(e) => handleDragStart(e, item)}
-                                            className="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm hover:shadow-md transition-shadow cursor-move"
-                                        >
-                                            <div className="flex items-start justify-between mb-2">
-                                                <h4 className="font-medium text-gray-900 dark:text-white text-sm">{item.title}</h4>
-                                                <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                                                    <MoreHorizontal className="w-4 h-4" />
-                                                </button>
-                                            </div>
-
-                                            <p className="text-gray-600 dark:text-gray-400 text-xs mb-3">{item.description}</p>
-
-                                            <div className="flex flex-wrap gap-1 mb-3">
-                                                {item.tags.map((tag) => (
-                                                    <span key={tag} className="bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded">
-                                                        {tag}
-                                                    </span>
-                                                ))}
-                                            </div>
-
-                                            <div className="flex items-center justify-between">
-                                                <span className={`text-xs px-2 py-1 rounded-full font-medium ${getPriorityColor(item.priority)}`}>
-                                                    {item.priority}
-                                                </span>
-                                                <div className="flex items-center gap-2">
-                                                    <Clock className="w-3 h-3 text-gray-400" />
-                                                    <span className="text-xs text-gray-500 dark:text-gray-400">{item.dueDate}</span>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
-                                                <div className="flex items-center gap-2">
-                                                    <User className="w-3 h-3 text-gray-400" />
-                                                    <span className="text-xs text-gray-600 dark:text-gray-400">{item.assignee}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-
-                                    <button className="w-full p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                                        <Plus className="w-4 h-4 mx-auto mb-1" />
-                                        <span className="text-sm">Add Task</span>
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 );
             case 'calendar':
@@ -391,38 +427,40 @@ const Dashboard = () => {
     };
 
     return (
-        <div className={`transition-all duration-300 dark:bg-gray-900 bg-red-50`}>
-            <main>
-                <div className="max-w-7xl mx-auto">
-                    <div className="mb-6">
-                        <div className="border-b border-gray-200 dark:border-gray-700">
-                            <nav className="-mb-px flex space-x-8">
-                                {tabs.map((tab) => {
-                                    const Icon = tab.icon;
-                                    return (
-                                        <button
-                                            key={tab.id}
-                                            onClick={() => setActiveTab(tab.id)}
-                                            className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === tab.id
-                                                ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
-                                                }`}
-                                        >
-                                            <Icon className="w-4 h-4" />
-                                            <span>{tab.label}</span>
-                                        </button>
-                                    );
-                                })}
-                            </nav>
-                        </div>
+        <div className="min-h-screen w-full dark:bg-gray-900">
+            {/* Full-width container with no margins/padding constraints */}
+            <div className="w-full h-full">
+                {/* Navigation Tabs */}
+                <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-7xl mx-auto">
+                        <nav className="-mb-px flex space-x-8 overflow-x-auto scrollbar-hide">
+                            {tabs.map((tab) => {
+                                const Icon = tab.icon;
+                                return (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${activeTab === tab.id
+                                            ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                                            }`}
+                                    >
+                                        <Icon className="w-4 h-4" />
+                                        <span>{tab.label}</span>
+                                    </button>
+                                );
+                            })}
+                        </nav>
                     </div>
+                </div>
 
-                    {/* Tab Content */}
-                    <div className="space-y-6">
+                {/* Main Content Area */}
+                <div className="w-full px-4 sm:px-6 lg:px-8 py-6">
+                    <div className="max-w-7xl mx-auto space-y-6">
                         {/* Action Bar */}
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-4">
-                                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div className="flex items-center space-x-3">
+                                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2 shadow-sm">
                                     <Plus className="w-4 h-4" />
                                     <span>New Task</span>
                                 </button>
@@ -432,10 +470,14 @@ const Dashboard = () => {
                                 </button>
                             </div>
 
-                            <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
-                                <span>Total Tasks: {Object.values(columns).reduce((acc, col) => acc + col.items.length, 0)}</span>
-                                <span>•</span>
-                                <span>Completed: {columns.done.items.length}</span>
+                            <div className="flex items-center space-x-4 text-sm">
+                                <span className="text-gray-600 dark:text-gray-400">
+                                    Total: <span className="font-semibold text-gray-900 dark:text-white">{Object.values(columns).reduce((acc, col) => acc + col.items.length, 0)}</span>
+                                </span>
+                                <span className="text-gray-300 dark:text-gray-600">|</span>
+                                <span className="text-gray-600 dark:text-gray-400">
+                                    Completed: <span className="font-semibold text-green-600 dark:text-green-400">{columns.done.items.length}</span>
+                                </span>
                             </div>
                         </div>
 
@@ -443,7 +485,38 @@ const Dashboard = () => {
                         {renderContent()}
                     </div>
                 </div>
-            </main>
+            </div>
+
+            {/* Custom Scrollbar Styles */}
+            <style jsx>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: rgba(0, 0, 0, 0.05);
+                    border-radius: 3px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: rgba(0, 0, 0, 0.2);
+                    border-radius: 3px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: rgba(0, 0, 0, 0.3);
+                }
+                .scrollbar-hide::-webkit-scrollbar {
+                    display: none;
+                }
+                .scrollbar-hide {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+                .line-clamp-2 {
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                }
+            `}</style>
         </div>
     );
 };

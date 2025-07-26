@@ -38,10 +38,10 @@ const Layout = () => {
                 />
 
                 <main
-                    className={`flex-1 overflow-y-auto bg-white dark:bg-gray-900 transition-all duration-300 ease-in-out
+                    className={`flex-1 overflow-auto bg-white dark:bg-gray-900 transition-all duration-300 ease-in-out
         ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'}`}
                 >
-                    <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
+                    <div className="w-full">
                         <Outlet />
                     </div>
                 </main>

@@ -23,7 +23,7 @@ const Sidebar = ({ isOpen, mobileOpen, setMobileOpen }) => {
     ];
 
     const renderNavItems = () => (
-        <nav className="flex-1 mt-6 overflow-y-auto px-2 space-y-1">
+        <nav className="flex-1 mt-6 px-2 space-y-1">
             {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
